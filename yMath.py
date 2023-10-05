@@ -1,16 +1,19 @@
-from os import system
-import sys
+from os         import system   as _system
+from pyperclip  import copy     as _copy
+from sys        import argv     as _argv
 import re as _re
 
 _FUNCS = {
-    'msup'    : ('<msup><mrow>',            '</mrow></msup>'),
-    'msub'    : ('<msub><mrow>',            '</mrow></msub>'),
-    'msubsup' : ('<msubsup><mrow>',         '</mrow></msubsup>'),
-    'mfrac'   : ('<mfrac><mrow>',           '</mrow></mfrac>'),
-    'mroot'   : ('<mroot><mrow>',           '</mrow></mroot>'),
-    'msqrt'   : ('<msqrt><mrow>',           '</mrow></msqrt>'),
-    'mspace'  : ('<mspace>',                '</mspace>'),
-    'log'     : ('<msub><mi>log</mi><mrow>','</mrow></msub>')
+    'msup'    : ('<msup><mrow>',                '</mrow></msup>'),
+    'msub'    : ('<msub><mrow>',                '</mrow></msub>'),
+    'msubsup' : ('<msubsup><mrow>',             '</mrow></msubsup>'),
+    'mfrac'   : ('<mfrac><mrow>',               '</mrow></mfrac>'),
+    'mroot'   : ('<mroot><mrow>',               '</mrow></mroot>'),
+    'msqrt'   : ('<msqrt><mrow>',               '</mrow></msqrt>'),
+    'mspace'  : ('<mspace>',                    '</mspace>'),
+    'log'     : ('<msub><mi>log</mi><mrow>',    '</mrow></msub>'),
+    'int'     : ('<msubsup><mo>∫</mo><mrow>',   '</mrow></msubsup>'),
+    'sigma'   : ('<munderover><mo>∑</mo><mrow>','</mrow></munderover>')
 }
 _IDS = {
     'PI'     : 'π',
@@ -62,7 +65,7 @@ def parse(tokens):
             words = _FUNCS.get(token[1],None)
             if(words is None):
                 print(f'未定义的函数`{token[1]}()`，你是想输入`{token[1]} ()`吗')
-                system('pause')
+                _system('pause')
                 exit()
             ans.append(words[0])
             funclayer[layer] = words[1]
@@ -113,17 +116,19 @@ def parse(tokens):
             else:
                 ans.append(f'<mo>{_OPS.get(token[1],token[1])}</mo>')
     ans.append("</math>")
-    for i in ans:
-        print(i, end='')
+    word = ''.join(ans)
+    print(word)
+    _copy(word)
 
 
 def main():
-    if len(sys.argv) > 1:
-        for file in sys.argv[1:]:
+    if len(_argv) > 1:
+        for file in _argv[1:]:
             with open(file, 'r') as f:
                 for line in f:
                     parse(lexer(line))
                     print("\n")
+                    _system('pause')
     else:
         while True:
             try:
